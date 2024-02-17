@@ -1,4 +1,8 @@
 # install selenium for python
 pip install selenium
+pip install selenium-page-factory
+pip install requests
 #upgrade selenium for python
 python.exe -m pip install --upgrade pip
+#fire fox driver
+https://github.com/doanhtu-bmt/axonnetworks_test.git
