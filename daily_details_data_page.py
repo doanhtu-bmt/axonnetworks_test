@@ -13,6 +13,5 @@ class DailyDetailsDataPage(PageFactory):
     }
             
     def get_daily_details_data(self):
-
-        print("Humidity: " + self.lbl_humid.text)
+        #print("Humidity: " + self.lbl_humid.text)
         return { "humid" : self.lbl_humid.text }
