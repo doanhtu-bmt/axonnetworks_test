@@ -1,5 +1,4 @@
 from seleniumpagefactory.Pagefactory import PageFactory
-from selenium.webdriver.common.by import By
 from utils import skip_ad
 
 class DailyDetailsDataPage(PageFactory):

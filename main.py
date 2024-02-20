@@ -6,7 +6,7 @@ from daily_data_page import DailyDataPage
 from multiprocessing import freeze_support, set_start_method
 from utils import time_diff_for_displaying, create_report_file
 
-import time, datetime
+import datetime
 import pprint
 
 def test01():

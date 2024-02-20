@@ -5,7 +5,7 @@ from utils import convertDowDate, convertSubDate, skip_ad, generate_xpath
 from daily_details_data_page import DailyDetailsDataPage
 from settings_page import SettingsPage
 
-from multiprocessing import Process, Pipe, current_process
+from multiprocessing import Process, Pipe
 from multiprocessing.connection import wait
 from daily_details_data_page import DailyDetailsDataPage
 
