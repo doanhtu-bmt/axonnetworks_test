@@ -4,19 +4,6 @@ from datetime import datetime
 import os
 import multiprocessing
 
-if multiprocessing.current_process().name == "MainProcess":
-  main_process_timestamp = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
-  log_file_path = os.path.join("logs", main_process_timestamp +"_" + multiprocessing.current_process().name + "_execution.log")
-else:
-  timestamp = "{:%Y%m%d-%H%M%S}".format(datetime.now())
-  parent_path = os.path.join("logs" , timestamp + "_workers")
-  if not os.path.exists(parent_path):
-    os.makedirs(parent_path)
-  log_file_path = os.path.join(parent_path, timestamp + multiprocessing.current_process().name + '_execution.log')
-
-logging.basicConfig(filename=log_file_path,
-                    format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
-
 import webdrivers
 from accuweather_mainpage import AccuWeatherMainpage
 from settings_page import SettingsPage
@@ -116,5 +103,11 @@ def generate_report(current_location, summary_datetime, start_time, end_time, el
   create_report_file(content=content)
 
 if __name__ == '__main__':
-  
+
+  main_process_timestamp = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
+  log_file_path = os.path.join("logs", main_process_timestamp +"_" + multiprocessing.current_process().name + "_execution.log")
+  logging.basicConfig(
+                    handlers=[logging.StreamHandler(), logging.FileHandler(log_file_path)],
+                    format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+
   accuw_test01_query_and_validate_daily_temperatures()

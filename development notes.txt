@@ -5,3 +5,4 @@ Things was not expected
 - need to skip ad: Done
 - multi-processing: Done
 - log file name in multi-processing: On-going
+- log entry with component, process/thread, module, function: Not started
