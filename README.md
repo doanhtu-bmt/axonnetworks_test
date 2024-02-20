@@ -1,6 +1,6 @@
-This project is based on python programming language
+This project is based on python programming language and selenium automation framework
 
-Test Rquirements:  
+Test Assigment:  
     Weather tools Use case: 
     1. Use https://www.accuweather.com 
     2. Select Daily menu -> Page will display weather information for 30 days 
@@ -39,3 +39,16 @@ Installation and setup:
             3. Run the downloaded file. Click Continue to proceed.
             4. Choose C++ build tools and press Install. You will need a reboot after the installation.
             5. Try installing the library via pip again.
+
+Test run:
+    python .\main.py
+
+    After the test is done, a summary report and weather data will be stored in the /reports/YYYYMMDD-hhmmss.txt file, file will contain the below info (example):
+        - Current location: Hoan Kiem, Hanoi
+        - Started on : 20/02/2024 08:49:12
+        - Finished on: 20/02/2024 09:05:42
+        - Queried data for 45 days. FEBRUARY 20 - APRIL 4
+        - Time elapsed: 16 mins 30 seconds
+        - Validation result: (PASS/FAILED + Failures details)
+        - Data: (in json format)
+
