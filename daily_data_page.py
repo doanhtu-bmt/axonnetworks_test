@@ -112,7 +112,7 @@ class DailyDataPage(PageFactory):
             value["details"] = moments_data
         return daily_data
     
-    def get_daily_details_data_parallel(self, daily_data, batches_run=10, limit_cpu_usage=100):
+    def get_daily_details_data_parallel(self, daily_data, batches_run=10, limit_cpu_usage=60):
         # get details data (humid, etc.)
         self.multi_process_readers = []
         processes = []
@@ -201,9 +201,9 @@ class DailyDataPage(PageFactory):
 
                 page_settings = SettingsPage(self.driver)
                 if current_temp_unit == 'celcius':
-                    page_settings.turn_settings_to_us_metrics()
+                    page_settings.turn_settings_to_imperial_units()
                 else:
-                    page_settings.turn_settings_to_iso_metrics()
+                    page_settings.turn_settings_to_metric_units()
                 self.driver.get(details_data_link)
                 details_data2 = daily_details_page.get_daily_details_data()
 
@@ -233,9 +233,9 @@ def get_details_data_multiprocessing_supported(w, date, moment, moment_link, num
     current_temp_unit = page.get_current_temp_unit()
     page_settings = SettingsPage(driver)
     if current_temp_unit == 'celcius':
-        page_settings.turn_settings_to_us_metrics()
+        page_settings.turn_settings_to_imperial_units()
     else:
-        page_settings.turn_settings_to_iso_metrics()
+        page_settings.turn_settings_to_metric_units()
     driver.get(moment_link)
     details_data2 = page.get_daily_details_data()
 

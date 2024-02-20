@@ -1,4 +1,10 @@
-x = ['1', '2', '3', '4', '5']
-y = ["        - " + a + "\n" for a in x] 
+import logging
+logging.basicConfig(filename='log.log', level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
-print("".join(y))
+def test01():
+    logging.info("aa")
+
+if __name__ == '__main__':
+    
+    test01()

@@ -1,4 +1,22 @@
+
 import logging
+from datetime import datetime
+import os
+import multiprocessing
+
+if multiprocessing.current_process().name == "MainProcess":
+  main_process_timestamp = '{:%Y%m%d-%H%M%S}'.format(datetime.now())
+  log_file_path = os.path.join("logs", main_process_timestamp +"_" + multiprocessing.current_process().name + "_execution.log")
+else:
+  timestamp = "{:%Y%m%d-%H%M%S}".format(datetime.now())
+  parent_path = os.path.join("logs" , timestamp + "_workers")
+  if not os.path.exists(parent_path):
+    os.makedirs(parent_path)
+  log_file_path = os.path.join(parent_path, timestamp + multiprocessing.current_process().name + '_execution.log')
+
+logging.basicConfig(filename=log_file_path,
+                    format='%(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+
 import webdrivers
 from accuweather_mainpage import AccuWeatherMainpage
 from settings_page import SettingsPage
@@ -6,22 +24,21 @@ from daily_data_page import DailyDataPage
 from multiprocessing import freeze_support, set_start_method
 from utils import time_diff_for_displaying, create_report_file
 
-import datetime
 import pprint
 
-def test01():
+def accuw_test01_query_and_validate_daily_temperatures():
   logging.info("Accuweather Test")
 
   freeze_support()
   set_start_method('spawn')
 
-  start = datetime.datetime.now()
+  start = datetime.now()
 
   driver = webdrivers.get_driver("firefox")
 
   page_settings = SettingsPage(driver)
-  logging.info("Turn settings unit to Fahrenheit")
-  page_settings.turn_settings_to_us_metrics()
+  logging.info("Turn settings to imperial units")
+  page_settings.turn_settings_to_imperial_units()
 
   page_main = AccuWeatherMainpage(driver)
   page_main.navigate_to_daily_data_page()
@@ -73,7 +90,7 @@ def test01():
       logging.info("Validating data in the {0}...Done".format(moment))
     logging.info("Validating data for date {0}...Done".format(date))
 
-  end = datetime.datetime.now()
+  end = datetime.now()
   (min, sec) = time_diff_for_displaying(start, end)
   logging.info("Time elapsed: {0} mins {1} seconds".format(min, sec))
   generate_report(current_location=current_location, summary_datetime=summary_datetime,
@@ -99,6 +116,5 @@ def generate_report(current_location, summary_datetime, start_time, end_time, el
   create_report_file(content=content)
 
 if __name__ == '__main__':
-    #logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
-    logging.basicConfig(level=logging.DEBUG)
-    test01()
+  
+  accuw_test01_query_and_validate_daily_temperatures()

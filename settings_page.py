@@ -11,13 +11,13 @@ class SettingsPage(PageFactory):
         "unit_selection"  : ("ID", "unit"),
     }
 
-    def turn_settings_to_us_metrics(self):
+    def turn_settings_to_imperial_units(self):
         select = Select(self.unit_selection)
 
         # select by value 
         select.select_by_value("F")
 
-    def turn_settings_to_iso_metrics(self):
+    def turn_settings_to_metric_units(self):
         select = Select(self.unit_selection)
 
         # select by value 

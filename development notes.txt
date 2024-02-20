@@ -2,5 +2,6 @@ Time elapsed - run sequential: 2602.370984315872 seconds
 Time elapsed - run multi-processing: 777.8828909397125 seconds
 
 Things was not expected
-- need to skip ad
-- multi-processing
+- need to skip ad: Done
+- multi-processing: Done
+- log file name in multi-processing: On-going

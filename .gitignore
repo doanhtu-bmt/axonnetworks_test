@@ -1,2 +1,7 @@
 
 *.pyc
+__pycache__/daily_data_page.cpython-312.pyc
+__pycache__/daily_details_data_page.cpython-312.pyc
+__pycache__/daily_data_page.cpython-312.pyc
+__pycache__/daily_details_data_page.cpython-312.pyc
+__pycache__/settings_page.cpython-312.pyc
