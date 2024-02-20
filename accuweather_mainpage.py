@@ -1,5 +1,5 @@
-import webdrivers
 from seleniumpagefactory.Pagefactory import PageFactory
+import logging
 
 class AccuWeatherMainpage(PageFactory):
 
@@ -13,6 +13,9 @@ class AccuWeatherMainpage(PageFactory):
     }
 
     def navigate_to_daily_data_page(self):
+        logging.info("Navigating to daily data page...")
         self.btn_hamburger.click()
         self.mnu_data_daily.click()
-        #print(self.driver.title)
+        logging.info(self.driver.title)
+        logging.info("Navigating to daily data page...Done")
+        

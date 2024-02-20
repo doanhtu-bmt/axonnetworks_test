@@ -3,6 +3,7 @@ from seleniumpagefactory.Pagefactory import PageFactory
 from selenium.webdriver.common.by import By
 from utils import convertDowDate, convertSubDate, skip_ad, generate_xpath
 from daily_details_data_page import DailyDetailsDataPage
+from settings_page import SettingsPage
 
 from multiprocessing import Process, Pipe, current_process
 from multiprocessing.connection import wait
@@ -14,10 +15,10 @@ import time
 import threading
 import logging
 import psutil
-
+import json
 
 class DailyDataPage(PageFactory):
-
+    
     XPATH_GENERIC_DAILY_CARD = '//div[contains(@data-qa,"dailyCard")]'
     XPATH_GENERIC_DAILY_CARD_DETAILS_LINK =  '//a[@class="daily-forecast-card "]'
     XPATH_GENERIC_DAILY_CARD_DOW_DATE =  '//span[@class="module-header dow date"]'
@@ -34,14 +35,18 @@ class DailyDataPage(PageFactory):
 
     locators = {
         "grd_daily_datagrid" : ("xpath", '//div[contains(@class,"page-content")]'),
-        "lbl_summary_datetime" : ("xpath", '//p[@class="module-title"]')
+        "lbl_summary_datetime" : ("xpath", '//p[@class="module-title"]'),
+        "lbl_location_header": ("xpath", '//h1[@class="header-loc"]')
     }
             
     def get_daily_data(self):
         
         skip_ad(self.driver)
 
-        print("Collecting data in date range: ", self.lbl_summary_datetime.text)
+        current_location = self.lbl_location_header.text
+        summary_datetime = self.lbl_summary_datetime.text
+        logging.info("Current location: " + current_location)
+        logging.info("Collecting data in date range: " + summary_datetime)
  
         daily_data = {}
         data_elements = self.grd_daily_datagrid.find_elements(By.XPATH, DailyDataPage.XPATH_GENERIC_DAILY_CARD)
@@ -75,20 +80,20 @@ class DailyDataPage(PageFactory):
             real_feel = realfeel_text.text.replace("\n", " ")
             logging.debug(real_feel)
 
-            daily_data[sub_date_element.text] = { 
-                "details_link"  : details_link,
-                "date"          : date,
-                "temp"          : temp,
-                "weather"       : weather,
-                "real_feel"     : real_feel
+            daily_data[sub_date_element.text] = {
+                "details_link"      : details_link,
+                "date"              : date,
+                "temp"              : temp,
+                "weather"           : weather,
+                "real_feel"         : real_feel
 
             }
             #print(daily_data)
             logging.debug("---------------------------------------------------------")
         
         # get details data (humid, etc.)
-        #return self.get_daily_details_data_sequencial(daily_data)
-        return self.get_daily_details_data_parallel(daily_data)
+        #return current_location, summary_datetime, self.get_daily_details_data_sequencial(daily_data)
+        return current_location, summary_datetime, self.get_daily_details_data_parallel(daily_data)
     
     def get_daily_details_data_sequencial(self, daily_data):
         # get details data (humid, etc.)
@@ -107,44 +112,48 @@ class DailyDataPage(PageFactory):
             value["details"] = moments_data
         return daily_data
     
-    def get_daily_details_data_parallel(self, daily_data, batches_run=15, limit_cpu_usage=100):
+    def get_daily_details_data_parallel(self, daily_data, batches_run=10, limit_cpu_usage=100):
         # get details data (humid, etc.)
         self.multi_process_readers = []
         processes = []
 
-        batches_process_running_control_thread = threading.Thread(target=self.__batches_process_running_control)
+        batches_process_running_control_thread = threading.Thread(target=self.__batches_process_running_control, args=(daily_data,))
         is_thread_run = False
 
-        for key, value in daily_data.items():
-
+        for date, value in daily_data.items():
             moments_data = {
                                 "morning" : None,
                                 "afternoon": None,
                                 "evening": None,
                                 "overnight": None
                             }
+            
+            value["details"] = moments_data
 
             for moment in moments_data.keys():
                 moment_link = self.__details_link_generator(value["details_link"], moment)
-                logging.debug("Moment link: ", moment_link)
+                logging.debug("Moment link: " + moment_link)
                 cpu_percent = psutil.cpu_percent() 
-                print(f"CPU utilization: {cpu_percent}%")
+                #print(f"CPU utilization: {cpu_percent}%")
                 while (len(self.multi_process_readers) > batches_run or cpu_percent > limit_cpu_usage):
                     if cpu_percent > limit_cpu_usage:
-                        print(f"HIGH CPU utilization: {cpu_percent}% detected. On-hold starting new processes...")
+                        logging.info(f"HIGH CPU utilization: {cpu_percent}% detected. On-hold starting new processes...")
                     time.sleep(0.5)
                     cpu_percent = psutil.cpu_percent()
 
                 r, w = Pipe(duplex=False)
                 self.multi_process_readers.append(r)
-                process = Process(target=get_details_data_multiprocessing_supported, args=(w, moment_link))
+                process = Process(target=get_details_data_multiprocessing_supported, args=(w, date, moment, moment_link))
                 processes.append(process)
+                logging.info("Launching sub process to query data for " + moment_link)
                 process.start()
                 w.close()
 
                 if not is_thread_run:
                     batches_process_running_control_thread.start()
                     is_thread_run = True
+            
+            #break # break for testing purpose
         
         for process in processes:
             process.join()
@@ -154,18 +163,23 @@ class DailyDataPage(PageFactory):
 
         return daily_data
     
-    def __batches_process_running_control(self):
+    def __batches_process_running_control(self, daily_data):
+        #print("###" + str(daily_data))
+
         while self.multi_process_readers:
             for r in wait(self.multi_process_readers):
                 try:
                     msg = r.recv()
+                    details_data_obj = json.loads(msg)
                 except EOFError:
                     self.multi_process_readers.remove(r)
                 else:
-                    logging.debug("Got message: ", msg)
-                    #moments_data[moment] = self.get_daily_details_data(moment_link)
-            
-            #value["details"] = moments_data
+                    #logging.debug("Got message from a worker process:" + msg)
+                    logging.info("Got message from a worker process:" + msg)
+
+                    # update data in dictionary
+                    date = details_data_obj["date"]
+                    daily_data[date]["details"][details_data_obj["moment"]] = details_data_obj["data"]
 
     def __details_link_generator(self, details_link, moment):
         if "weather-today" in details_link:
@@ -176,32 +190,63 @@ class DailyDataPage(PageFactory):
         details_link = details_link.replace("daily-weather-forecast", moment + "-weather-forecast")
         return details_link
     
-    def get_daily_details_data(self, details_data_link, num_tries=3, wait_time=3, run_parallel=False):
+    def get_daily_details_data(self, details_data_link, num_tries=3, wait_time=3):
         for i in range(num_tries):
             try:
-                if run_parallel:
-                    new_driver = webdrivers.get_driver("firefox")
-                    daily_details_page = DailyDetailsDataPage(new_driver)
+                self.driver.get(details_data_link)
+                daily_details_page = DailyDetailsDataPage(self.driver)
+                details_data = daily_details_page.get_daily_details_data()
+
+                current_temp_unit = daily_details_page.get_current_temp_unit()
+
+                page_settings = SettingsPage(self.driver)
+                if current_temp_unit == 'celcius':
+                    page_settings.turn_settings_to_us_metrics()
                 else:
-                    self.driver.get(details_data_link)
-                    daily_details_page = DailyDetailsDataPage(self.driver)
-                return daily_details_page.get_daily_details_data()
+                    page_settings.turn_settings_to_iso_metrics()
+                self.driver.get(details_data_link)
+                details_data2 = daily_details_page.get_daily_details_data()
+
+                # merge data on fahrenheit and celcius units
+                return dict(details_data, **details_data2) 
+
             except:
                 logging.error("Error: " + traceback.format_exc())
                 if i < num_tries - 1:
                     logging.error("Retrying #{0}...".format(str(i)))
                     time.sleep(wait_time)
     
-def get_details_data_multiprocessing_supported(w, url):
+def get_details_data_multiprocessing_supported(w, date, moment, moment_link, num_tries=3, wait_time=3):
     driver = webdrivers.get_firefox_driver()
-    driver.get(url)
+    for i in range(num_tries):
+        try:
+            driver.get(moment_link)
+        except:
+            logging.error("Error: " + traceback.format_exc())
+            if i < num_tries - 1:
+                logging.error("Retrying #{0}...".format(str(i)))
+                time.sleep(wait_time)
+
     page = DailyDetailsDataPage(driver)
     details_data = page.get_daily_details_data()
+    
+    current_temp_unit = page.get_current_temp_unit()
+    page_settings = SettingsPage(driver)
+    if current_temp_unit == 'celcius':
+        page_settings.turn_settings_to_us_metrics()
+    else:
+        page_settings.turn_settings_to_iso_metrics()
+    driver.get(moment_link)
+    details_data2 = page.get_daily_details_data()
+
     driver.quit()
 
-    details_data = {url : details_data}
+    # merge data on fahrenheit and celcius units
+    details_data = dict(details_data, **details_data2)
 
-    w.send(current_process().name + url + ": " + str(details_data))
+    data = {"date": date, "moment": moment, "moment_link" : moment_link, "data" : details_data}
+
+    w.send(json.dumps(data))
     w.close()
 
 

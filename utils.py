@@ -4,7 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-import time
+import time, datetime
+import os
 
 from selenium.webdriver.common.by import By
 
@@ -38,7 +39,7 @@ def skip_ad(driver):
     # driver.click()
     ActionChains(driver).move_by_offset(50, 50).pause(2).click().perform()
     # ToDo: need to wait for data to load fully
-    time.sleep(10)
+    time.sleep(5)
 
 def convertDowDate(dow_date):
     lower_dow_date = dow_date.lower()
@@ -60,3 +61,17 @@ def convertSubDate(sub_date):
     month = int(date_ls[0])
     day   = date_ls[1]
     return calendar.month_name[month] + " " + day
+
+def create_report_file(content):
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    path = os.path.join("reports", timestr + ".txt")
+    f = open(path, "w")
+    f.write(content)
+    f.close()
+
+def time_diff_for_displaying(first_time, later_time):
+    difference = later_time - first_time
+    datetime.timedelta(0, 8, 562000)
+    seconds_in_day = 24 * 60 * 60
+    return divmod(difference.days * seconds_in_day + difference.seconds, 60)
+

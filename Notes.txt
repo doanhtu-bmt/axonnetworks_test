@@ -1,2 +1,6 @@
-Time elapsed: 2602.370984315872 seconds
-PS C:\Data\Working - Personal\Interview 2024\AXONNetworks\axonnetworks_test> 
+Time elapsed - run sequential: 2602.370984315872 seconds
+Time elapsed - run multi-processing: 777.8828909397125 seconds
+
+Things was not expected
+- need to skip ad
+- multi-processing
