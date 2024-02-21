@@ -1,0 +1,52 @@
+root - INFO - Accuweather Test
+selenium.webdriver.common.selenium_manager - DEBUG - Selenium Manager binary found at: C:\Users\doanh\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe
+selenium.webdriver.common.selenium_manager - DEBUG - Executing process: C:\Users\doanh\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe --browser firefox --debug --language-binding python --output json
+selenium.webdriver.common.selenium_manager - DEBUG - geckodriver not found in PATH
+selenium.webdriver.common.selenium_manager - DEBUG - firefox detected at C:\Program Files\Mozilla Firefox\firefox.exe
+selenium.webdriver.common.selenium_manager - DEBUG - Running command: wmic datafile where name='C:\\Program Files\\Mozilla Firefox\\firefox.exe' get Version /value
+selenium.webdriver.common.selenium_manager - DEBUG - Output: "\r\r\n\r\r\nVersion=122.0.1.8801\r\r\n\r\r\n\r\r\n\r"
+selenium.webdriver.common.selenium_manager - DEBUG - Detected browser: firefox 122.0.1.8801
+selenium.webdriver.common.selenium_manager - WARNING - Problem reading geckodriver versions: error sending request for url (https://raw.githubusercontent.com/SeleniumHQ/selenium/trunk/common/geckodriver/geckodriver-support.json): error trying to connect: dns error: No such host is known. (os error 11001). Using latest geckodriver version
+selenium.webdriver.common.selenium_manager - WARNING - There was an error managing geckodriver (error sending request for url (https://github.com/mozilla/geckodriver/releases/latest): error trying to connect: dns error: No such host is known. (os error 11001)); using driver found in the cache
+selenium.webdriver.common.selenium_manager - WARNING - Error sending stats to Plausible: error sending request for url (https://plausible.io/api/event): error trying to connect: dns error: No such host is known. (os error 11001)
+selenium.webdriver.common.selenium_manager - DEBUG - Driver path: C:\Users\doanh\.cache\selenium\geckodriver\win64\0.34.0\geckodriver.exe
+selenium.webdriver.common.selenium_manager - DEBUG - Browser path: C:\Program Files\Mozilla Firefox\firefox.exe
+selenium.webdriver.common.selenium_manager - DEBUG - Using driver at: C:\Users\doanh\.cache\selenium\geckodriver\win64\0.34.0\geckodriver.exe
+selenium.webdriver.common.service - DEBUG - Started executable: `C:\Users\doanh\.cache\selenium\geckodriver\win64\0.34.0\geckodriver.exe` in a child process with pid: 97840 using 0 to output -3
+selenium.webdriver.remote.remote_connection - DEBUG - POST http://localhost:50535/session {'capabilities': {'firstMatch': [{}], 'alwaysMatch': {'browserName': 'firefox', 'acceptInsecureCerts': True, 'moz:debuggerAddress': True, 'pageLoadStrategy': <PageLoadStrategy.normal: 'normal'>, 'browserVersion': None, 'moz:firefoxOptions': {'binary': 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'}}}}
+urllib3.connectionpool - DEBUG - Starting new HTTP connection (1): localhost:50535
+urllib3.connectionpool - DEBUG - http://localhost:50535 "POST /session HTTP/1.1" 200 0
+selenium.webdriver.remote.remote_connection - DEBUG - Remote response: status=200 | data={"value":{"sessionId":"8504aba4-cfec-453a-9d36-0703005087b4","capabilities":{"acceptInsecureCerts":true,"browserName":"firefox","browserVersion":"122.0.1","moz:accessibilityChecks":false,"moz:buildID":"20240205133611","moz:debuggerAddress":"127.0.0.1:50536","moz:geckodriverVersion":"0.34.0","moz:headless":false,"moz:platformVersion":"10.0","moz:processID":111716,"moz:profile":"C:\\Users\\doanh\\AppData\\Local\\Temp\\rust_mozprofilevgWyhN","moz:shutdownTimeout":60000,"moz:webdriverClick":true,"moz:windowless":false,"pageLoadStrategy":"normal","platformName":"windows","proxy":{},"setWindowRect":true,"strictFileInteractability":false,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"unhandledPromptBehavior":"dismiss and notify"}}} | headers=HTTPHeaderDict({'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-cache', 'content-length': '747', 'date': 'Wed, 21 Feb 2024 09:26:18 GMT'})
+selenium.webdriver.remote.remote_connection - DEBUG - Finished Request
+selenium.webdriver.remote.remote_connection - DEBUG - POST http://localhost:50535/session/8504aba4-cfec-453a-9d36-0703005087b4/url {'url': 'https://www.accuweather.com/en/settings'}
+urllib3.connectionpool - DEBUG - http://localhost:50535 "POST /session/8504aba4-cfec-453a-9d36-0703005087b4/url HTTP/1.1" 500 0
+selenium.webdriver.remote.remote_connection - DEBUG - Remote response: status=500 | data={"value":{"error":"unknown error","message":"Reached error page: about:neterror?e=dnsNotFound&u=https%3A//www.accuweather.com/en/settings&c=UTF-8&d=We%20can%E2%80%99t%20connect%20to%20the%20server%20at%20www.accuweather.com.","stacktrace":"RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8\nWebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:191:5\nUnknownError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:800:5\ncheckReadyState@chrome://remote/content/marionette/navigate.sys.mjs:58:24\nonNavigation@chrome://remote/content/marionette/navigate.sys.mjs:324:39\nemit@resource://gre/modules/EventEmitter.sys.mjs:154:20\nreceiveMessage@chrome://remote/content/marionette/actors/MarionetteEventsParent.sys.mjs:33:25\n"}} | headers=HTTPHeaderDict({'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-cache', 'content-length': '765', 'date': 'Wed, 21 Feb 2024 09:26:20 GMT'})
+selenium.webdriver.remote.remote_connection - DEBUG - Finished Request
+root - ERROR - Error: Traceback (most recent call last):
+  File "C:\Data\Working - Personal\Interview 2024\AXONNetworks\axonnetworks_test\main.py", line 35, in accuw_test01_query_and_validate_daily_temperatures
+    page_settings = SettingsPage(driver)
+                    ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Data\Working - Personal\Interview 2024\AXONNetworks\axonnetworks_test\settings_page.py", line 8, in __init__
+    self.driver.get("https://www.accuweather.com/en/settings")
+  File "C:\Users\doanh\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 356, in get
+    self.execute(Command.GET, {"url": url})
+  File "C:\Users\doanh\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 347, in execute
+    self.error_handler.check_response(response)
+  File "C:\Users\doanh\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 229, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.WebDriverException: Message: Reached error page: about:neterror?e=dnsNotFound&u=https%3A//www.accuweather.com/en/settings&c=UTF-8&d=We%20can%E2%80%99t%20connect%20to%20the%20server%20at%20www.accuweather.com.
+Stacktrace:
+RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
+WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:191:5
+UnknownError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:800:5
+checkReadyState@chrome://remote/content/marionette/navigate.sys.mjs:58:24
+onNavigation@chrome://remote/content/marionette/navigate.sys.mjs:324:39
+emit@resource://gre/modules/EventEmitter.sys.mjs:154:20
+receiveMessage@chrome://remote/content/marionette/actors/MarionetteEventsParent.sys.mjs:33:25
+
+
+selenium.webdriver.remote.remote_connection - DEBUG - DELETE http://localhost:50535/session/8504aba4-cfec-453a-9d36-0703005087b4 {}
+urllib3.connectionpool - DEBUG - http://localhost:50535 "DELETE /session/8504aba4-cfec-453a-9d36-0703005087b4 HTTP/1.1" 200 0
+selenium.webdriver.remote.remote_connection - DEBUG - Remote response: status=200 | data={"value":null} | headers=HTTPHeaderDict({'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-cache', 'content-length': '14', 'date': 'Wed, 21 Feb 2024 09:26:20 GMT'})
+selenium.webdriver.remote.remote_connection - DEBUG - Finished Request
+root - INFO - Time elapsed: 0 mins 9 seconds
