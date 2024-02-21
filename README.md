@@ -1,6 +1,8 @@
-This project is based on python programming language and selenium automation framework
+This project is based on python programming language and selenium automation framework:
+ - Applied Page Object Model (POM) pattern along with selenium-page-factory
+ - Applied multi-processing - boost up the query weather data speed to around 10-20 mins for 45 days
 
-Test Assigment:  
+Test Assigment from AXON Networks:  
     Weather tools Use case: 
     1. Use https://www.accuweather.com 
     2. Select Daily menu -> Page will display weather information for 30 days 
